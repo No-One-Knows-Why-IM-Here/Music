@@ -7,3 +7,4 @@ There are some important features in the code that are easy to change.
 Want to change the resolution? Adjust `self.desired_bins = n`. 
 Want to change the graph update time? Tweak `self.timer.start(n)`. 
 Want to change how smooth the graph is? Modify `window_size = n`.
+and so on
