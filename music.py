@@ -95,13 +95,37 @@ class SpectrumAnalyzer3D:
 
     def get_input_device(self):
         """
-        Retrieves the default audio input device.
+        Displays a list of input devices and asks the user to select one via a dialog.
         """
         try:
-            device_info = sd.query_devices(kind='input')
-            return device_info
+            devices = sd.query_devices()
+            input_devices = [device for device in devices if device['max_input_channels'] > 0]
+            if not input_devices:
+                print("No input devices found.")
+                return None
+
+            # Build a list of device names to display
+            device_list = [f"{device['index']}: {device['name']}" for device in input_devices]
+
+            # Create a dialog for device selection
+            item, ok = QtWidgets.QInputDialog.getItem(
+                self.view,
+                "Select Input Device",
+                "Available input devices:",
+                device_list,
+                0,
+                False
+            )
+            if ok and item:
+                # Extract the index from the selected item
+                selected_index = int(item.split(":")[0])
+                # Find the selected device
+                selected_device = next(device for device in input_devices if device['index'] == selected_index)
+                return selected_device
+            else:
+                return None
         except Exception as e:
-            print(f"Error accessing input device: {e}")
+            print(f"Error accessing input devices: {e}")
             return None
 
     def audio_callback(self, indata, frames, time, status):
